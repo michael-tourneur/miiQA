@@ -1,0 +1,35 @@
+@if ($answers)
+<table class="uk-table uk-table-hover uk-table-middle">
+    <thead>
+        <tr>
+            <th class="pk-table-width-minimum"><input type="checkbox" class="js-select-all"></th>
+            <th class="pk-table-min-width-200">@trans('Attached to question')</th>
+            <th class="pk-table-width-100">@trans('Author')</th>
+            <th class="pk-table-width-100">@trans('Date')</th>
+            <th class="pk-table-width-200 pk-table-min-width-200">@trans('URL')</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($answers as $answer)
+        <tr>
+            <td>
+                <input type="checkbox" name="ids[]" class="js-select" value="@( $answer.id )">
+            </td>
+            <td class="pk-table-text-break">
+              	#@($answer.question.id) - <a href="@url('@miiQA/admin/answer/edit', ['id' => $answer.id])">@( $answer.question.title )</a>
+            </td>
+            <td>
+                <a href="@url('@system/user/edit', ['id' => $answer.user.id])">@( $answer.user.username )</a>
+            </td>
+            <td>
+                @date($answer.date, 'long')
+            </td>
+             <td class="pk-table-text-break">
+             		@set( $link = url('@miiQA/site/question/id', ['id' => $answer.questionId], 'base') )
+                <a href="@url('@miiQA/site/question/id', ['id' => $answer.questionId])#@($answer.id)" target="_blank">@( urldecode($link.'#'.$answer->getId()) )</a> 
+            </td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
+@endif

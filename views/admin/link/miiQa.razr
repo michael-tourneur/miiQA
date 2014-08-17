@@ -1,0 +1,54 @@
+<div class="uk-form-row">
+    <div class="uk-form-controls uk-form-controls-text">
+        <p class="uk-form-controls-condensed">
+            <label>
+                <input class="js-questions" type="radio" name="miiqa-radio" value="@@miiQA/site"@( $link == '@miiQA/site' ? ' checked' : '' )> @trans('Questions View')
+            </label>
+        </p>
+    </div>
+</div>
+
+<div class="uk-form-row">
+    <div class="uk-form-controls uk-form-controls-text">
+        <p class="uk-form-controls-condensed">
+            <label>
+                <input type="radio" name="miiqa-radio" value=""@( $link != '@miiQA/site' ? ' checked' : '' )> @trans('Question')
+            </label>
+            <select class="js-question" name="">
+                <option value=""@( !in_array($params.id, array_keys($questions)) ? ' selected' : '' )>@trans('- Select Question -')</option>
+                @foreach ($questions as $question)
+                <option value="@@miiQA/site/question/id?id=@( $question.id )"@( $params.id == $question.id ? ' selected' : '' )>@( $question.title )</option>
+                @endforeach
+            </select>
+        </p>
+    </div>
+</div>
+
+<script>
+
+    require(['jquery'], function($) {
+
+        var picker = $('.js-linkpicker'), url = $('#form2-url', picker), radios = $('[name="miiqa-radio"]', picker), question = $('.js-question', picker);
+
+        radios.on('change', function() {
+            var value = $(this).val();
+
+            if (value) {
+                url.val($(this).val());
+            } else {
+                question.trigger('change');
+            }
+        });
+
+        question.on('change', function() {
+            var value = $(this).val();
+
+            if (value) {
+                radios.filter('[value=""]').prop('checked', true);
+                url.val(value);
+            }
+        });
+
+    });
+
+</script>

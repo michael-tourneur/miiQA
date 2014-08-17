@@ -1,0 +1,21 @@
+<form id="js-post" class="uk-form uk-form-stacked" action="@url('@miiQA/site/question/save')" method="post">
+
+    <fieldset data-uk-margin>
+    		<div class="uk-form-row">
+	    		<label class="uk-form-label" for="question[title]">
+	    			@trans('Ask a question here')
+	        </label>
+	        <input name="question[title]" value="@( $question.title )" class="uk-width-1-1" type="text" placeholder="How to">
+        </div>
+        <div class="uk-form-row">
+	        <label class="uk-form-label" for="question[content]">
+	    			@trans('Add a bit more details')
+	    		</label>
+	    		<textarea name="question[content]" class="uk-width-1-1" rows="10"></textarea>
+				</div>
+				
+        <input type="hidden" name="question[user_id]" value="@($question.userid)">
+        <button class="uk-button">@trans('Submit your question')</button> 
+    </fieldset>
+
+</form>

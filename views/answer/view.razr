@@ -1,0 +1,37 @@
+<div class="miiqa-answer @if($answer.voteBest) miiqa-answer-best @endif uk-panel uk-panel-box">
+
+	<div class="uk-clearfix">
+			<div class="uk-float-left uk-text-large">
+		  		<a class="js-answer-vote" href="@url('@miiQA/site/answer/id/vote', ['id' => $answer.id, 'question' => $answer.questionId, 'vote' => true])"><i class="uk-icon-chevron-up"></i></a> 
+		  		<span class="vote"> @($answer.vote) </span>
+		  		<a class="js-answer-vote" href="@url('@miiQA/site/answer/id/vote', ['id' => $answer.id, 'question' => $answer.questionId, 'vote' => false])"><i class="uk-icon-chevron-down"></i></a>
+		  </div>
+
+		  <div class="uk-float-right uk-text-large">
+			@if($question.userId == @(int)$app['user']->getId() && !$answer.voteBest)
+  				<a href="@url('@miiQA/site/answer/id/best', ['id' => $answer.id, 'question' => $question.id])"><i class="uk-icon-circle-thin"></i></a>
+  		@elseif($answer.voteBest)
+  					<i class="uk-icon-check-circle"></i>
+		  @endif
+		  </div>
+  </div>
+
+  <hr class="uk-article-divider">
+
+	<div class="uk-clearfix">
+		@($answer.content) 
+		<div class="uk-float-right uk-text-small">
+			<div>@trans( 'Answered' ) @date($answer.date())</div>
+			<div class="uk-clearfix">
+				<div class="js-avatar uk-float-left" data-email="@($answer.user.email)">
+					@gravatar($answer.user.email, ['size' => 40, 'attrs' => ['alt' => $answer.user.username, 'class' => 'uk-border-circle']])
+				</div>
+				<div class="uk-float-right">
+					@($answer.user.username)
+				</div>
+			</div>
+		</div>
+	</div>
+	
+
+</div>

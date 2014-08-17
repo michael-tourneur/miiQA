@@ -1,0 +1,23 @@
+@if(count($questions))
+
+	@foreach ($questions as $question)
+	 	<div class="uk-width-1-1 uk-panel uk-panel-box">
+	 		<div class="uk-clearfix">
+		 		<div class="uk-align-left"><a href="@url('@miiQA/site/question/id', ['id' => $question.id])">@( $question.title )</a> </div>
+		 		<div class="uk-align-right">Answers @( $question.commentCount )</div>
+		 		<div class="uk-align-right">Views @( $question.viewCount )</div>
+		 		<div class="uk-align-right">Vote @( $question.vote )</div>
+		 	</div>
+	 		<div class="uk-clearfix">
+				@($question.user.username) | @date($question.date, 'Y-m-d')
+	 		</div>
+	 	</div>
+	@endforeach
+
+@else
+
+ 	<div class="uk-width-1-1 uk-panel uk-panel-box uk-text-bold">
+ 		@trans( 'No data found' )
+ 	</div>
+ 	
+@endif

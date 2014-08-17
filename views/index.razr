@@ -1,0 +1,72 @@
+@script('miiQA.question-index', 'extension://miiQA/assets/js/question/index.js', ['requirejs'])
+@style('miiQA.style', 'extension://miiQA/assets/css/style.css')
+
+<section id="miiQA-index" class="">
+		<form class="uk-autocomplete uk-form">	
+				<input type="text" name="filter[search]" placeholder="@trans( 'Search...' )" value="@($filter['search'])" class="uk-width-1-1 uk-form-large">
+		</form>
+		<br>
+		<form class="uk-form uk-form-stacked">
+				<div class="uk-visible-small">
+					<a href="@url( '@miiQA/site/question/add' )" class="uk-button uk-button-success uk-width-1-1" type="button">@trans( 'Ask a question' )</a>
+					<br><br>
+				</div>
+			  <div class="uk-width-1-1 uk-panel uk-panel-box uk-clearfix">
+					    <div class="uk-float-right uk-hidden-small">
+					    		<a href="@url( '@miiQA/site/question/add' )" class="uk-button uk-button-success" type="button">@trans( 'Ask a question' )</a>
+					    </div>
+					    <div id="questions-filters" class="uk-float-left">
+					    		@trans( 'Status:' ) 
+
+					    		@set( $query = ['filter' => $filter] )
+
+					    		@set( $current = !(array_key_exists('status', $filter)) )
+					    		@set( $query = array_merge( $query, [ 'filter' => array_merge( $filter, ['status' => ''] ) ] ) )
+								  <a data-status="" class="@( $current ? 'active' : '')" href="@url( '@miiQA/site', $query )">@trans( 'All' )</a>
+					    		@set( $current = (array_key_exists('status', $filter) && $filter['status'] == constant('STATUS_OPEN', $question)) )
+					    		@set( $query = array_merge( $query, [ 'filter' => array_merge( $filter, ['status' => constant('STATUS_OPEN', $question)] ) ] ) )
+					    		<a data-status="@($query['filter']['status'])" class="@( $current ? 'active' : '')" href="@url( '@miiQA/site', $query )">@trans( 'Open' )</a> 
+
+					    		@set( $current = (array_key_exists('status', $filter) && $filter['status'] == constant('STATUS_ANSWERED', $question)) )
+					    		@set( $query = array_merge( $query, [ 'filter' => array_merge( $filter, ['status' => constant('STATUS_ANSWERED', $question)] ) ] ) )
+					    		<a data-status="@($query['filter']['status'])" class="@( $current ? 'active' : '')" href="@url( '@miiQA/site', $query )">@trans( 'Answered' )</a> 
+
+					    		@set( $current = (array_key_exists('status', $filter) && $filter['status'] == constant('STATUS_RESOLVED', $question)) )
+					    		@set( $query = array_merge( $query, [ 'filter' => array_merge( $filter, ['status' => constant('STATUS_RESOLVED', $question)] ) ] ) )
+					    		<a data-status="@($query['filter']['status'])" class="@( $current ? 'active' : '')" href="@url( '@miiQA/site', $query )">@trans( 'Resolved' )</a>  
+	    						<i class="uk-icon-spinner uk-icon-spin js-spinner uk-margin-small-right uk-hidden"></i>
+					    </div>
+			  </div>
+
+			  <div class="uk-width-1-1 uk-panel uk-panel-box uk-clearfix">
+				    <div id="questions-orders" class="uk-float-right">
+				    		<i class="uk-icon-spinner uk-icon-spin js-spinner uk-margin-small-right uk-hidden"></i>
+				    		<div class="uk-button-group">
+					    			<?php 
+					    				$query = ['filter' => $filter];
+					    				$current = (!array_key_exists('orderby', $filter) || (array_key_exists('orderby', $filter) && $filter['orderby'] == 'view_count'));
+					    				$query['filter']['orderby'] = 'view_count';
+					    			?>
+								    <a data-orderby="view_count" class="uk-button uk-button-mini@( $current ? ' active uk-button-danger' : '')" href="@url( '@miiQA/site', $query )">@trans( 'View' )</a>
+								    <?php 
+					    				$current = (array_key_exists('orderby', $filter) && $filter['orderby'] == 'comment_count');
+					    				$query['filter']['orderby'] = 'comment_count';
+					    			?>
+								    <a data-orderby="comment_count" class="uk-button uk-button-mini@( $current ? ' active uk-button-danger' : '')" href="@url( '@miiQA/site', $query )">@trans( 'Answer' )</a>
+								    <?php 
+					    				$current = (array_key_exists('orderby', $filter) && $filter['orderby'] == 'vote');
+					    				$query['filter']['orderby'] = 'vote';
+					    			?>
+								    <a data-orderby="vote" class="uk-button uk-button-mini@( $current ? ' active uk-button-danger' : '')" href="@url( '@miiQA/site', $query )">@trans( 'Vote' )</a>
+								</div>
+				    </div>
+			  </div>
+			  <input type="hidden" name="page" value="0">
+		</form>
+		<br>
+	<div id="questions-table">
+	@include('extension://miiQA/views/question/table.razr')
+	</div>
+	<ul class="uk-pagination @( $total < 2 ? 'uk-hidden' : '' )" data-uk-pagination="{ pages: @( $total ) }"></ul>
+
+</section>

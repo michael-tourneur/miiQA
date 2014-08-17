@@ -1,0 +1,72 @@
+@script('miiQA.admin-answer-edit', 'extension://miiQA/assets/js/admin/answer/edit.js', 'requirejs')
+
+<form id="js-answer" class="uk-form" action="@url('@miiQA/admin/answer/save')" method="post">
+
+    @section('toolbar', 'show')
+        <div class="uk-float-left">
+            <button class="uk-button uk-button-primary" type="submit">@trans('Save') <i class="uk-icon-spinner uk-icon-spin js-spinner uk-margin-small-left uk-hidden"></i></button>
+            <a class="uk-button js-cancel" href="@url('@miiQA/admin/answer')" data-label="@trans('Close')">@( $answer.id ? __('Close') : __('Cancel') )</a>
+        </div>
+    @endsection
+
+    <div class="uk-grid uk-grid-divider" data-uk-grid-margin data-uk-grid-match>
+        <div class="uk-width-medium-3-4">
+
+            <div class="uk-form-row">
+                <input type="hidden" name="id" value="@( $answer.id ?: 0 )">
+                @editor('answer[content]', $answer.content, ['id' => 'answer-content', 'data-markdown' => $answer.get('markdown', '0')])
+            </div>
+
+        </div>
+        <div class="uk-width-medium-1-4 pk-sidebar-right">
+
+            <div class="uk-panel uk-panel-divider">
+                <div class="uk-form-row">
+                    <label for="form-question" class="uk-form-label">@trans('Author')</label>
+                    <div class="uk-form-controls">
+                        <select id="form-question" class="uk-width-1-1" name="answer[question_id]">
+                            @foreach($questions as $id => $question)
+                            <option value="@( $id )"@( $answer.questionId == $id ? ' selected' : '')>@( $question.title )</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <label for="form-author" class="uk-form-label">@trans('Author')</label>
+                    <div class="uk-form-controls">
+                        <select id="form-author" class="uk-width-1-1" name="answer[user_id]">
+                            @foreach($users as $id => $user)
+                            <option value="@( $id )"@( $answer.userid == $id ? ' selected' : '')>@( $user.username )</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <span class="uk-form-label">@trans('Answered on')</span>
+                    <div class="uk-form-controls">
+                        <div class="uk-grid uk-grid-small" data-uk-grid-margin>
+                            <div class="uk-width-large-1-2">
+                                <div class="uk-form-icon">
+                                    <i class="uk-icon-calendar"></i>
+                                    <input class="uk-form-width-1-1 uk-form-small js-publish" type="text" data-uk-datepicker="{ format: 'YYYY-MM-DD' }" name="" value="@date($answer.date, 'Y-m-d')">
+                                </div>
+                            </div>
+                            <div class="uk-width-large-1-2">
+                                <div class="uk-form-icon" data-uk-timepicker="">
+                                    <i class="uk-icon-clock-o"></i>
+                                    <input class="uk-form-width-1-1 uk-form-small js-publish" type="text" name="" value="@date($answer.date, 'H:i')">
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="answer[date]" value="@date($answer.date, 'Y-m-d H:i:s')">
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    @token
+
+</form>

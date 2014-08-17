@@ -1,0 +1,7 @@
+#miiQA-index .uk-autocomplete{
+	position: relative;
+}
+
+#miiQA-index .uk-autocomplete .uk-dropdown{
+	width: 100%;
+}

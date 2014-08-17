@@ -1,0 +1,10 @@
+<h3>@(count($answers)) @trans('Answers')</h3>
+
+
+@foreach($answers as $answer) 
+	@include('extension://miiQA/views/answer/view.razr', compact('answer', 'question'))
+@endforeach
+
+@if(!count($answers))
+	 @trans('Be the first to answer this question!')
+@endif

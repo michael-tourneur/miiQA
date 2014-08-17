@@ -1,0 +1,15 @@
+{
+    "name": "miiQA",
+    "version": "0.1.0",
+    "type": "extension",
+    "title": "miiQA",
+    "description": "Question & Answer extension like Stack Overflow, Quora or Yahoo Answers",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Michael Tourneur",
+            "email": "michael.tourneur@gmail.com",
+            "homepage": ""
+        }
+    ]
+}

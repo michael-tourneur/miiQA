@@ -1,0 +1,54 @@
+@script('miiQA.question-view', 'extension://miiQA/assets/js/question/view.js', ['requirejs'])
+
+<article class="miiqa-question uk-article">
+	<header>
+		<h1 class="uk-article-title">
+			@($question.title)
+			<div class="uk-text-large">
+	  		<a class="js-question-vote" href="@url('@miiQA/site/question/id/vote', ['id' => $question.id, 'vote' => true])">
+	  			<i class="uk-icon-chevron-up"></i>
+	  		</a> 
+	  		<span class="vote"> @($question.vote) </span>
+	  		<a class="js-question-vote" href="@url('@miiQA/site/question/id/vote', ['id' => $question.id, 'vote' => false])">
+	  			<i class="uk-icon-chevron-down"></i>
+	  		</a>
+		  </div>
+		</h1>
+	</header>
+	<div class="uk-clearfix">
+		@($question.content)
+		<div class="uk-float-right uk-text-small">
+			<div>@trans( 'Answered' ) @date($question.date)</div>
+			<div class="uk-clearfix">
+				<div class="js-avatar uk-float-left" data-email="@($question.user.email)">
+					@gravatar(@($question.user.email), ['size' => 40, 'attrs' => ['alt' => @($question.user.username), 'class' => 'uk-border-circle']])
+				</div>
+				<div class="uk-float-right">
+					@(@($question.user.username))
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr class="uk-article-divider">
+</article>
+
+<br>
+<div uk-clearfix">
+	<div id="js-answers-filter" class="uk-float-right">
+		<i class="uk-icon-spinner uk-icon-spin js-spinner uk-margin-small-right uk-hidden"></i>
+		<div class="uk-button-group">
+	    <a 	class="uk-button uk-button-mini @( (!$filter['orderby'] || ($filter['orderby'] == 'date' && $filter['order'] == 'desc')) ? 'uk-button-danger active' : '')" 
+	    		href="@url( '@miiQA/site/question/id', ['id' => $question.id, 'filter[orderby]' => 'date', 'filter[order]' => 'desc'] )">@trans('Active')</a>
+	    <a 	class="uk-button uk-button-mini @( $filter['orderby'] == 'date' && $filter['order'] == 'asc' ? 'uk-button-danger active' : '')" 
+	    		href="@url( '@miiQA/site/question/id', ['id' => $question.id, 'filter[orderby]' => 'date', 'filter[order]' => 'asc'] )">@trans('Oldest')</a>
+	    <a 	class="uk-button uk-button-mini @( ($filter['orderby'] == 'vote') ? 'uk-button-danger active' : '')" 
+	    		href="@url( '@miiQA/site/question/id', ['id' => $question.id, 'filter[orderby]' => 'vote'] )">@trans('Votes')</a>
+
+		</div>
+	</div>
+</div>
+
+<div id="js-answers-table">
+	@include('extension://miiQA/views/answer/table.razr', compact('answers', 'question'))
+</div>
+@include('extension://miiQA/views/answer/edit.razr')

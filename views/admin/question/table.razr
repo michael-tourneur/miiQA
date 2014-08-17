@@ -1,0 +1,53 @@
+@if ($questions)
+<table class="uk-table uk-table-hover uk-table-middle">
+    <thead>
+        <tr>
+            <th class="pk-table-width-minimum"><input type="checkbox" class="js-select-all"></th>
+            <th class="pk-table-min-width-200">@trans('Title')</th>
+            <th class="pk-table-width-100 uk-text-center">@trans('Status')</th>
+            <th class="pk-table-width-100">@trans('Author')</th>
+            <th class="pk-table-width-100 uk-text-center">@trans('Answers')</th>
+            <th class="pk-table-width-100">@trans('Date')</th>
+            <th class="pk-table-width-200 pk-table-min-width-200">@trans('URL')</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($questions as $question)
+        <tr>
+            <td>
+                <input type="checkbox" name="ids[]" class="js-select" value="@( $question.id )">
+            </td>
+            <td>
+                <a href="@url('@miiQA/admin/question/edit', ['id' => $question.id])">@( $question.title )</a>
+            </td>
+            <td class="uk-text-center">
+                @if ($question.status == constant('STATUS_OPEN', $question))
+                    <i class="uk-icon-circle uk-text-success"></i>
+                @elseif ($question.status == constant('STATUS_ANSWERED', $question))
+                    <i class="uk-icon-circle uk-text-warning"></i>
+                @elseif ($question.status == constant('STATUS_RESOLVED', $question))
+                    <i class="uk-icon-circle uk-text-muted"></i>
+                @endif
+            </td>
+            <td>
+                <a href="@url('@system/user/edit', ['id' => $question.user.id])">@( $question.user.username )</a>
+            </td>
+            <td class="uk-text-center">
+                <a class="uk-badge uk-badge-notification pk-badge" href="@url('@miiQA/admin/answer', ['question' => $question.id])" title="@trans("%comments% comment(s)", ["%comments%" => $question.commentCount])">@( $question.commentCount )</a>
+            </td>
+            <td>
+                @date($question.date, 'long')
+            </td>
+            <td class="pk-table-text-break">
+                @set( $link = url('@miiQA/site/question/id', ['id' => $question.id], 'base') )
+                @if ($question.status == 2 && $question.hasAccess($app.user))
+                <a href="@url('@miiQA/site/question/id', ['id' => $question.id])" target="_blank">@( urldecode($link) )</a>
+                @else
+                @( urldecode($link) )
+                @endif
+            </td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
+@endif

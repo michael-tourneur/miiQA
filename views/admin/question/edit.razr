@@ -1,0 +1,75 @@
+@script('miiQA.admin-question-edit', 'extension://miiQA/assets/js/admin/question/edit.js', 'requirejs')
+
+<form id="js-question" class="uk-form" action="@url('@miiQA/admin/question/save')" method="post">
+
+    @section('toolbar', 'show')
+        <div class="uk-float-left">
+            <button class="uk-button uk-button-primary" type="submit">@trans('Save') <i class="uk-icon-spinner uk-icon-spin js-spinner uk-margin-small-left uk-hidden"></i></button>
+            <a class="uk-button js-cancel" href="@url('@miiQA/admin/question')" data-label="@trans('Close')">@( $question.id ? __('Close') : __('Cancel') )</a>
+        </div>
+    @endsection
+
+    <div class="uk-grid uk-grid-divider" data-uk-grid-margin data-uk-grid-match>
+        <div class="uk-width-medium-3-4">
+
+            <div class="uk-form-row">
+                <input class="uk-width-1-1 uk-form-large" type="text" name="question[title]" value="@( $question.title )" placeholder="@trans('Enter Title')" required>
+                <input type="hidden" name="id" value="@( $question.id ?: 0 )">
+            </div>
+            <div class="uk-form-row">
+                @editor('question[content]', $question.content, ['id' => 'question-content', 'data-markdown' => $question.get('markdown', '0')])
+            </div>
+
+        </div>
+        <div class="uk-width-medium-1-4 pk-sidebar-right">
+
+            <div class="uk-panel uk-panel-divider">
+                <div class="uk-form-row">
+                    <label for="form-status" class="uk-form-label">@trans('Status')</label>
+                    <div class="uk-form-controls">
+                        <select id="form-status" class="uk-width-1-1" name="question[status]">
+                            @foreach($statuses as $id => $status)
+                            <option value="@( $id )"@( $question.status == $id ? ' selected' : '')>@( $status )</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <label for="form-author" class="uk-form-label">@trans('Author')</label>
+                    <div class="uk-form-controls">
+                        <select id="form-author" class="uk-width-1-1" name="question[user_id]">
+                            @foreach($users as $id => $user)
+                            <option value="@( $id )"@( $question.userid == $id ? ' selected' : '')>@( $user.username )</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="uk-form-row">
+                    <span class="uk-form-label">@trans('Asked on')</span>
+                    <div class="uk-form-controls">
+                        <div class="uk-grid uk-grid-small" data-uk-grid-margin>
+                            <div class="uk-width-large-1-2">
+                                <div class="uk-form-icon">
+                                    <i class="uk-icon-calendar"></i>
+                                    <input class="uk-form-width-1-1 uk-form-small js-publish" type="text" data-uk-datepicker="{ format: 'YYYY-MM-DD' }" name="" value="@date($question.date, 'Y-m-d')">
+                                </div>
+                            </div>
+                            <div class="uk-width-large-1-2">
+                                <div class="uk-form-icon" data-uk-timepicker="">
+                                    <i class="uk-icon-clock-o"></i>
+                                    <input class="uk-form-width-1-1 uk-form-small js-publish" type="text" name="" value="@date($question.date, 'H:i')">
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="question[date]" value="@date($question.date, 'Y-m-d H:i:s')">
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    @token
+
+</form>
