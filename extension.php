@@ -65,7 +65,7 @@ return [
 
     'defaults' => [
 
-        'index.questions_per_page'  => 1,
+        'index.questions_per_page'  => 20,
 
     ]
 
