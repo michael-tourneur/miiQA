@@ -43,7 +43,7 @@ class SiteController extends Controller
 
 	/**
      * @Request({"filter": "array", "page":"int"})
-     * @Response("extension://miiQA/views/index.razr")
+     * @Response("extension://miiqa/views/index.razr")
      */
     public function indexAction($filter = null, $page = 0)
     {	  
@@ -92,7 +92,7 @@ class SiteController extends Controller
 
         if ($this['request']->isXmlHttpRequest()) {
             return $this['response']->json([
-                'table' => $this['view']->render('extension://miiQA/views/question/table.razr', ['questions' => $query->get()]),
+                'table' => $this['view']->render('extension://miiqa/views/question/table.razr', ['questions' => $query->get()]),
                 'total' => $total,
             ]);
         }
@@ -108,7 +108,7 @@ class SiteController extends Controller
 
     /**
      * @Route("/question/add", name="@miiQA/site/question/add")
-     * @Response("extension://miiQA/views/question/edit.razr")
+     * @Response("extension://miiqa/views/question/edit.razr")
      */
     public function addQuestionAction()
     {        
@@ -142,7 +142,7 @@ class SiteController extends Controller
     /**
      * @Route("/question/{id}", name="@miiQA/site/question/id")
      * @Request({"id": "int", "filter": "array"})
-     * @Response("extension://miiQA/views/question/view.razr")
+     * @Response("extension://miiqa/views/question/view.razr")
      */
     public function showQuestionAction($id, $filter = null)
     {
@@ -181,7 +181,7 @@ class SiteController extends Controller
 
         if($this['request']->isXmlHttpRequest())
             return $this['response']->json([
-                'table' => $this['view']->render('extension://miiQA/views/answer/table.razr', ['answers' => $question->getComments()]), 
+                'table' => $this['view']->render('extension://miiqa/views/answer/table.razr', ['answers' => $question->getComments()]), 
                 'count' => count($question->getComments()), 
             ]);
 

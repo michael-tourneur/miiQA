@@ -50,7 +50,7 @@ class AnswerController extends Controller
 
     /**
      * @Request({"filter": "array", "page":"int"})
-     * @Response("extension://miiQA/views/admin/answer/index.razr")
+     * @Response("extension://miiqa/views/admin/answer/index.razr")
      */
     public function indexAction($filter = null, $page = 0)
     {
@@ -71,7 +71,7 @@ class AnswerController extends Controller
 
         if ($this['request']->isXmlHttpRequest()) {
             return $this['response']->json([
-                'table' => $this['view']->render('extension://miiQA/views/admin/answer/table.razr', compact('count', 'answers')),
+                'table' => $this['view']->render('extension://miiqa/views/admin/answer/table.razr', compact('count', 'answers')),
                 'total' => $total
             ]);
         }
@@ -86,7 +86,7 @@ class AnswerController extends Controller
     }
 
     /**
-     * @Response("extension://miiQA/views/admin/answer/edit.razr")
+     * @Response("extension://miiqa/views/admin/answer/edit.razr")
      */
     public function addAction()
     {
@@ -149,7 +149,7 @@ class AnswerController extends Controller
 
     /**
      * @Request({"id": "int"})
-     * @Response("extension://miiQA/views/admin/answer/edit.razr")
+     * @Response("extension://miiqa/views/admin/answer/edit.razr")
      */
     public function editAction($id)
     {

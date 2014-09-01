@@ -1,4 +1,4 @@
-@script('miiQA.admin-answer-index', 'extension://miiQA/assets/js/admin/answer/index.js', 'requirejs')
+@script('miiQA.admin-answer-index', 'extension://miiqa/assets/js/admin/answer/index.js', 'requirejs')
 
 <form id="js-answers" class="uk-form" action="@url('@miiQA/admin/answer')" method="post">
 
@@ -19,7 +19,7 @@
     <p class="uk-alert uk-alert-info @( $answers ? 'uk-hidden' : '' )">@trans('No Answer found.')</p>
 
     <div class="js-table uk-overflow-container">
-        @include('extension://miiQA/views/admin/answer/table.razr')
+        @include('extension://miiqa/views/admin/answer/table.razr')
     </div>
 
     <ul class="uk-pagination @( $total < 2 ? 'uk-hidden' : '' )" data-uk-pagination="{ pages: @( $total ) }"></ul>

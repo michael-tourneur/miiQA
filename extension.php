@@ -25,7 +25,7 @@ return [
 
         'miiQA' => [
             'label'  => 'miiQA',
-            'icon'   => 'extension://miiQA/extension.png',
+            'icon'   => 'extension://miiqa/extension.png',
             'url'    => '@miiQA/admin/question',
             'active' => '@miiQA/admin/question*',
             'access' => 'miiQA: manage questions || miiQA: manage answers',

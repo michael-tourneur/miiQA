@@ -1,5 +1,5 @@
-@script('miiQA.question-index', 'extension://miiQA/assets/js/question/index.js', ['requirejs'])
-@style('miiQA.style', 'extension://miiQA/assets/css/style.css')
+@script('miiQA.question-index', 'extension://miiqa/assets/js/question/index.js', ['requirejs'])
+@style('miiQA.style', 'extension://miiqa/assets/css/style.css')
 
 <section id="miiQA-index" class="">
 		<form class="uk-autocomplete uk-form">	
@@ -65,7 +65,7 @@
 		</form>
 		<br>
 	<div id="questions-table">
-	@include('extension://miiQA/views/question/table.razr')
+	@include('extension://miiqa/views/question/table.razr')
 	</div>
 	<ul class="uk-pagination @( $total < 2 ? 'uk-hidden' : '' )" data-uk-pagination="{ pages: @( $total ) }"></ul>
 

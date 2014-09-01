@@ -1,4 +1,4 @@
-@script('miiQA.admin-question-edit', 'extension://miiQA/assets/js/admin/question/edit.js', 'requirejs')
+@script('miiQA.admin-question-edit', 'extension://miiqa/assets/js/admin/question/edit.js', 'requirejs')
 
 <form id="js-question" class="uk-form" action="@url('@miiQA/admin/question/save')" method="post">
 

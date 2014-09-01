@@ -48,7 +48,7 @@ class QuestionController extends Controller
 
     /**
      * @Request({"filter": "array", "page":"int"})
-     * @Response("extension://miiQA/views/admin/question/index.razr")
+     * @Response("extension://miiqa/views/admin/question/index.razr")
      */
     public function indexAction($filter = null, $page = 0)
     {
@@ -73,7 +73,7 @@ class QuestionController extends Controller
 
         if ($this['request']->isXmlHttpRequest()) {
             return $this['response']->json([
-                'table' => $this['view']->render('extension://miiQA/views/admin/question/table.razr', compact('count', 'questions')),
+                'table' => $this['view']->render('extension://miiqa/views/admin/question/table.razr', compact('count', 'questions')),
                 'total' => $total
             ]);
         }
@@ -89,7 +89,7 @@ class QuestionController extends Controller
     }
 
     /**
-     * @Response("extension://miiQA/views/admin/question/edit.razr")
+     * @Response("extension://miiqa/views/admin/question/edit.razr")
      */
     public function addAction()
     {
@@ -144,7 +144,7 @@ class QuestionController extends Controller
 
     /**
      * @Request({"id": "int"})
-     * @Response("extension://miiQA/views/admin/question/edit.razr")
+     * @Response("extension://miiqa/views/admin/question/edit.razr")
      */
     public function editAction($id)
     {

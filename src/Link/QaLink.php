@@ -36,6 +36,6 @@ class QaLink extends Link
     public function renderForm($link, $params = [], $context = '')
     {
         $questions = $this['db.em']->getRepository('Mii\Qa\Entity\Question')->findAll();
-        return $this['view']->render('extension://miiQA/views/admin/link/miiQA.razr', compact('link', 'params', 'questions'));
+        return $this['view']->render('extension://miiqa/views/admin/link/miiQA.razr', compact('link', 'params', 'questions'));
     }
 }

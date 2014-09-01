@@ -1,4 +1,4 @@
-@script('miiQA.question-view', 'extension://miiQA/assets/js/question/view.js', ['requirejs'])
+@script('miiQA.question-view', 'extension://miiqa/assets/js/question/view.js', ['requirejs'])
 
 <article class="miiqa-question uk-article">
 	<header>
@@ -49,6 +49,6 @@
 </div>
 
 <div id="js-answers-table">
-	@include('extension://miiQA/views/answer/table.razr', compact('answers', 'question'))
+	@include('extension://miiqa/views/answer/table.razr', compact('answers', 'question'))
 </div>
-@include('extension://miiQA/views/answer/edit.razr')
+@include('extension://miiqa/views/answer/edit.razr')

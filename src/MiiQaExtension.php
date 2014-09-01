@@ -32,9 +32,11 @@ class MiiQaExtension extends Extension
 
     public function enable()
     {
-       if ($version = $this['migrator']->create('extension://miiQA/migrations', $this['option']->get('miiQA:version'))->run()) {
+        if ($version = $this['migrator']->create('extension://miiqa/migrations', $this['option']->get('miiQA:version'))->run()) {
+
             $this['option']->set('miiQA:version', $version);
         }
+
     }
 
     public function uninstall()
