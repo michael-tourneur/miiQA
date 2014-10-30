@@ -46,7 +46,7 @@ class SiteController extends Controller
      * @Response("extension://miiqa/views/index.razr")
      */
     public function indexAction($filter = null, $page = 0)
-    {	  
+    {
         $query = $this->questions->query();
 
         //autocomplete filter
@@ -74,7 +74,7 @@ class SiteController extends Controller
         }
 
         if (isset($filter['search']) && strlen($filter['search'])) {
-            
+
             $query->where('title LIKE :title', [':title' => "%{$filter['search']}%"]);
         }
 
@@ -87,7 +87,7 @@ class SiteController extends Controller
         $count  = $query->count();
         $total  = ceil($count / $limit);
         $page   = max(0, min($total - 1, $page));
-        
+
         $query->related('user')->offset($page * $limit)->limit($limit)->get();
 
         if ($this['request']->isXmlHttpRequest()) {
@@ -96,7 +96,7 @@ class SiteController extends Controller
                 'total' => $total,
             ]);
         }
-            
+
         return [
             'head.title' => __('QA'),
             'questions' => $query->get(),
@@ -111,13 +111,13 @@ class SiteController extends Controller
      * @Response("extension://miiqa/views/question/edit.razr")
      */
     public function addQuestionAction()
-    {        
+    {
         $question = new Question;
         $question->setUserId((int) $this['user']->getId());
         return [
-            'head.title' => __('Add Question'), 
-            'question' => $question, 
-            'statuses' => Question::getStatuses(), 
+            'head.title' => __('Add Question'),
+            'question' => $question,
+            'statuses' => Question::getStatuses(),
         ];
     }
 
@@ -136,7 +136,7 @@ class SiteController extends Controller
         if(isset($response['error']) && $response['error']) $this['message']->error($response['message']);
         else $this['message']->info($response['message']);
 
-        return $this->redirect($this['url']->route('@miiQA/site'));
+        return $this->redirect('@miiQA/site');
     }
 
     /**
@@ -181,12 +181,12 @@ class SiteController extends Controller
 
         if($this['request']->isXmlHttpRequest())
             return $this['response']->json([
-                'table' => $this['view']->render('extension://miiqa/views/answer/table.razr', ['answers' => $question->getComments()]), 
-                'count' => count($question->getComments()), 
+                'table' => $this['view']->render('extension://miiqa/views/answer/table.razr', ['answers' => $question->getComments()]),
+                'count' => count($question->getComments()),
             ]);
 
         return [
-            'head.title' => __($question->getTitle()), 
+            'head.title' => __($question->getTitle()),
             'question' => $question,
             'answers' => $question->getComments(),
             'filter' => $filter,
@@ -217,7 +217,7 @@ class SiteController extends Controller
         if(isset($response['error']) && $response['error']) $this['message']->error($response['message']);
         else $this['message']->info($response['message']);
 
-        return $this->redirect($this['url']->route('@miiQA/site/question/id', ['id' => $id]));
+        return $this->redirect('@miiQA/site/question/id', ['id' => $id]);
     }
 
     /**
@@ -235,7 +235,7 @@ class SiteController extends Controller
         if(isset($response['error']) && $response['error']) $this['message']->error($response['message']);
         else $this['message']->info($response['message']);
 
-        return $this->redirect($this['url']->route('@miiQA/site/question/id', ['id' => $data['question_id']]));
+        return $this->redirect('@miiQA/site/question/id', ['id' => $data['question_id']]);
     }
 
     /**
@@ -262,7 +262,7 @@ class SiteController extends Controller
         if(isset($response['error']) && $response['error']) $this['message']->error($response['message']);
         else $this['message']->info($response['message']);
 
-        return $this->redirect($this['url']->route('@miiQA/site/question/id', ['id' => $question]));
+        return $this->redirect('@miiQA/site/question/id', ['id' => $question]);
     }
 
 
@@ -272,7 +272,7 @@ class SiteController extends Controller
      * @Response("json")
      */
     public function bestAnswerAction($id, $question)
-    {   
+    {
 
         $answerController = new AnswerController();
         $response = $answerController->bestAction($id);
@@ -283,7 +283,7 @@ class SiteController extends Controller
         if(isset($response['error']) && $response['error']) $this['message']->error($response['message']);
         else $this['message']->info($response['message']);
 
-        return $this->redirect($this['url']->route('@miiQA/site/question/id', ['id' => $question]));
+        return $this->redirect('@miiQA/site/question/id', ['id' => $question]);
     }
 
 }

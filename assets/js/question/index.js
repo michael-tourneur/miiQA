@@ -14,20 +14,22 @@ require(['jquery', 'uikit!autocomplete,pagination','domReady!'], function($, uik
   page                  = $('[name="page"]', section);
   baseUrl               = '//' + window.location.host;
 	currentUrl            = baseUrl + window.location.pathname;
+
+  console.log(search);
   data                  = {
     filter: {
       search  : search.val(),
-      status  : filters.find('.active[data-status]').data('status'), 
-      orderby : orders.find('.active[data-orderby]').data('orderby'), 
+      status  : filters.find('.active[data-status]').data('status'),
+      orderby : orders.find('.active[data-orderby]').data('orderby'),
     },
     page  : page.val(),
   };
 
 	autocomplete = uikit.autocomplete(search.parent(), {
     source: function(release) {
-      $.getJSON(currentUrl, { filter: {autocomplete: search.val()} }, function(data) {
+      $.getJSON(currentUrl, { filter: {autocomplete: search.val()} }, function(Getdata) {
         data.filter.search = search.val();
-        release(data.list);        
+        release(Getdata.list);
       });
     },
     template: '<ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">{{~items}}<li data-value="{{$item.title}}" data-url="{{$item.url}}" data-id="{{$item.id}}"><a>{{$item.title}}</a></li>{{/items}}</ul>'
