@@ -1,0 +1,26 @@
+@if ($tags)
+<table class="uk-table uk-table-hover uk-table-middle">
+    <thead>
+        <tr>
+            <th class="pk-table-width-minimum"><input type="checkbox" class="js-select-all"></th>
+            <th class="pk-table-min-width-200">@trans('Label')</th>
+            <th class="pk-table-width-100 uk-text-center">@trans('Count')</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($tags as $tag)
+        <tr>
+            <td>
+                <input type="checkbox" name="ids[]" class="js-select" value="@( $tag.id )">
+            </td>
+            <td>
+                @trans( $tag.label )
+            </td>
+            <td>
+              @($tag.count)
+            </td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
+@endif

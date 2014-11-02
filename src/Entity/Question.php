@@ -6,6 +6,7 @@ use Pagekit\System\Entity\DataTrait;
 use Pagekit\User\Entity\AccessTrait;
 use Pagekit\Comment\CommentsTrait;
 use Pagekit\Framework\Database\Event\EntityEvent;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @Entity(tableClass="@miiqa_questions")
@@ -37,6 +38,12 @@ class Question
      * @OrderBy({"date" = "DESC"})
      */
     protected $comments;
+
+    /**
+     * @ManyToMany(targetEntity="Tag", keyFrom ="questions")
+     * @JoinTable(name="users_groups")
+     **/
+    private $tags;
 
     /**
      * @BelongsTo(targetEntity="Pagekit\User\Entity\User", keyFrom="user_id")
@@ -75,6 +82,10 @@ class Question
 
      /** @Column(type="integer") */
     protected $best_answer = 0;
+
+    public function __construct() {
+        $this->groups = new ArrayCollection();
+    }
 
     public function getId()
     {
@@ -154,7 +165,7 @@ class Question
     }
 
     public static function getStatuses()
-    {   
+    {
         return [
             self::STATUS_OPEN           => __('Open'),
             self::STATUS_ANSWERED       => __('Answered'),
@@ -238,6 +249,12 @@ class Question
         return $this->date;
     }
 
+    public function addTag(Tag $tag)
+    {
+        $tag->addQuestion($this); // synchronously updating inverse side
+        $this->tags[] = $tag;
+    }
+
     /**
      * @PreSave
      */
@@ -253,6 +270,7 @@ class Question
         while ($repository->query()->where('slug = ?', [$this->slug])->where(function($query) use($id) { if ($id) $query->where('id <> ?', [$id]); })->first()) {
             $this->slug = preg_replace('/-\d+$/', '', $this->slug).'-'.$i++;
         }
+
     }
 
     /**

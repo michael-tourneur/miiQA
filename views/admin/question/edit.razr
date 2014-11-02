@@ -19,6 +19,14 @@
             <div class="uk-form-row">
                 @editor('question[content]', $question.content, ['id' => 'question-content', 'data-markdown' => $question.get('markdown', '0')])
             </div>
+            <div class="uk-form-row">
+                <span class="uk-form-label">Tags:</span>
+                <select multiple="multiple" name="question[tags][]" class="uk-width-1-1 uk-form-large">
+                @foreach($tags['tagsAvailable'] as $tag)
+                  <option @if(in_array($tag.id ,$tags['tagsSelected'])) selected="selected" @endif value="@( $tag.id )">@trans( $tag.label )</option>
+                @endforeach
+                </select>
+            </div>
 
         </div>
         <div class="uk-width-medium-1-4 pk-sidebar-right">

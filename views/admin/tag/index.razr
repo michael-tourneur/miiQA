@@ -1,0 +1,38 @@
+@script('miiQA.admin-tag-index', 'extension://miiqa/assets/js/admin/tag/index.js', 'requirejs')
+
+<form id="addTagForm" class="uk-form uk-hidden" action="@url('@miiQA/admin/tag/save')" method="post">
+    <input type="text" required="required" placeholder="Label" value="" name="tag[label]"/>
+    <input type="hidden" value="0" name="id"/>
+    <input type="submit" class="uk-button" value="Add"/>
+    @token
+</form>
+
+<form id="js-tags" class="uk-form" action="@url('@miiQA/admin/tag')" method="post">
+
+    @section('toolbar', 'show')
+        <div class="uk-float-left">
+
+            <button id="addTag" class="uk-button uk-button-primary">@trans('Add Tag')</button>
+            <a class="uk-button pk-button-danger uk-hidden js-show-on-select" href="#" data-action="@url('@miiQA/admin/tag/delete')">@trans('Delete')</a>
+
+        </div>
+        <div class="uk-float-right uk-hidden-small">
+
+            <input type="text" name="filter[search]" placeholder="@trans('Search')" value="@( $filter['search'] )">
+
+        </div>
+    @endsection
+
+    <p class="uk-alert uk-alert-info @( $tags ? 'uk-hidden' : '' )">@trans('No tags found.')</p>
+
+    <div class="js-table uk-overflow-container">
+        @include('extension://miiqa/views/admin/tag/table.razr')
+    </div>
+
+    <ul class="uk-pagination @( $total < 2 ? 'uk-hidden' : '' )" data-uk-pagination="{ pages: @( $total ) }"></ul>
+
+    @token
+
+    <input type="hidden" name="page" value="0">
+
+</form>
