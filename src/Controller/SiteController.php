@@ -32,6 +32,11 @@ class SiteController extends Controller
     protected $answers;
 
     /**
+     * @var Repository
+     */
+    protected $tags;
+
+    /**
      * Constructor.
      */
     public function __construct(MiiQaExtension $extension)
@@ -39,6 +44,7 @@ class SiteController extends Controller
         $this->extension    = $extension;
         $this->questions    = $this['db.em']->getRepository('Mii\Qa\Entity\Question');
         $this->answers      = $this['db.em']->getRepository('Mii\Qa\Entity\Answer');
+        $this->tags         = $this['db.em']->getRepository('Mii\Qa\Entity\Tag');
     }
 
 	/**
@@ -88,7 +94,7 @@ class SiteController extends Controller
         $total  = ceil($count / $limit);
         $page   = max(0, min($total - 1, $page));
 
-        $query->related('user')->offset($page * $limit)->limit($limit)->get();
+        $query->related('user')->related('tags')->offset($page * $limit)->limit($limit)->get();
 
         if ($this['request']->isXmlHttpRequest()) {
             return $this['response']->json([
@@ -114,22 +120,24 @@ class SiteController extends Controller
     {
         $question = new Question;
         $question->setUserId((int) $this['user']->getId());
+        $tagsAvailable = $this->tags->query()->orderBy('count', 'DESC')->orderBy('label', 'ASC')->get();
         return [
             'head.title' => __('Add Question'),
             'question' => $question,
+            'tags' => $tagsAvailable,
             'statuses' => Question::getStatuses(),
         ];
     }
 
     /**
      * @Route("/question/save", name="@miiQA/site/question/save")
-     * @Request({"id": "int", "question": "array"})
+     * @Request({"id": "int", "question": "array", "tags": "array"})
      * @Response("json")
      */
-    public function saveQuestionAction($id = null, $data)
+    public function saveQuestionAction($id = null, $data, $tags = null)
     {
         $questionController = new QuestionController($this->extension);
-        $response = $questionController->saveAction($id, $data);
+        $response = $questionController->saveAction($id, $data, $tags);
         if($this['request']->isXmlHttpRequest())
             return $response;
 
@@ -147,7 +155,7 @@ class SiteController extends Controller
     public function showQuestionAction($id, $filter = null)
     {
 
-        if (!$question = $this->questions->query()->related('user')->where(['id = ?', 'date < ?'], [$id, new \DateTime])->first()) {
+        if (!$question = $this->questions->query()->related('user')->related('tags')->where(['id = ?', 'date < ?'], [$id, new \DateTime])->first()) {
             return $this['response']->create(__('Question not found!'), 404);
         }
 

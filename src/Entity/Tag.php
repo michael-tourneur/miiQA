@@ -3,9 +3,7 @@
 namespace Mii\Qa\Entity;
 
 use Pagekit\System\Entity\DataTrait;
-use Pagekit\User\Entity\AccessTrait;
 use Pagekit\Framework\Database\Event\EntityEvent;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @Entity(tableClass="@miiqa_tags")
@@ -13,11 +11,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Tag
 {
     use DataTrait;
-
-    /**
-     * @ManyToMany(targetEntity="Question", keyTo="tags")
-     **/
-    private $questions;
 
     /** @Column(type="integer") @Id */
     protected $id;
@@ -27,10 +20,6 @@ class Tag
 
     /** @Column(type="integer") */
     protected $count = 0;
-
-    public function __construct() {
-        $this->questions = new ArrayCollection();
-    }
 
     public function getId()
     {
@@ -71,9 +60,13 @@ class Tag
         $this->count = $value;
     }
 
-    public function addQuestion(Question $question)
+    /**
+     * @PostDelete
+     */
+    public function postDelete(EntityEvent $event)
     {
-        $this->questions[] = $question;
-        $this->setCountPlus();
+        $connection = $event->getConnection();
+        $connection->delete('@miiqa_question_tag', ['tag_id' => $this->getId()]);
     }
+
 }

@@ -9,7 +9,7 @@ require(['jquery', 'uikit!pagination', 'rowselect', 'domReady!'], function($, ui
         addTag       = $('#addTag'),
         addTagForm   = $('#addTagForm');
 
-    // action button
+    // delete button
     form.on('click', '[data-action]', function(e) {
         e.preventDefault();
 
@@ -31,7 +31,7 @@ require(['jquery', 'uikit!pagination', 'rowselect', 'domReady!'], function($, ui
     });
 
     // pagination
-    pagination.on('uk-select-page', function(e, index) {
+    pagination.on('uk.pagination.select', function(e, index) {
         page.val(index);
 
         $.post(form.data('action'), form.serialize(), function(data) {
@@ -42,11 +42,17 @@ require(['jquery', 'uikit!pagination', 'rowselect', 'domReady!'], function($, ui
         });
     });
 
+    function selectPage(index) {
+        console.log(index);
+        pagination.data('pagination').selectPage(index);
+    }
+
     addTag.on('click', function(e){
       e.preventDefault();
       addTagForm.toggleClass('uk-hidden');
     });
 
+    // add button
     addTagForm.on('submit', function(e){
       e.preventDefault();
       $.post($(this).attr('action'), $(this).serialize(), function(data) {
@@ -54,10 +60,4 @@ require(['jquery', 'uikit!pagination', 'rowselect', 'domReady!'], function($, ui
           selectPage(page.val());
       });
     });
-
-    function selectPage(index) {
-        pagination.data('pagination').selectPage(index);
-    }
-
-
 });

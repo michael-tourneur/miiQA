@@ -8,8 +8,13 @@
 		 		<div class="uk-align-right">Views @( $question.viewCount )</div>
 		 		<div class="uk-align-right">Vote @( $question.vote )</div>
 		 	</div>
-	 		<div class="uk-clearfix">
-				@($question.user.username) | @date($question.date, 'Y-m-d')
+		 	<div class="uk-clearfix">
+				@foreach($question.getTags() as $tag)
+					<div class="uk-badge">@($tag.getLabel())</div>
+				@endforeach
+				<div class="uk-float-right">
+					@($question.user.username) | @date($question.date, 'Y-m-d')
+		 		</div>
 	 		</div>
 	 	</div>
 	@endforeach

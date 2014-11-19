@@ -4,8 +4,8 @@
 
     <fieldset data-uk-margin>
         <div class="uk-form-row">
-	    		<textarea name="answer[content]" class="uk-width-1-1" rows="10" required="required"></textarea>
-				</div>	
+		  <textarea name="answer[content]" class="uk-width-1-1" rows="10" required="required"></textarea>
+		</div>	
         <input type="hidden" name="answer[user_id]" value="@($answer.userid)">
         <input type="hidden" name="answer[question_id]" value="@($question.id)">
         <button class="uk-button">

@@ -28,7 +28,7 @@ class QuestionController extends Controller
     /**
      * @var Repository
      */
-    protected $roles;
+    protected $tags;
 
     /**
      * @var UserRepository
@@ -41,10 +41,9 @@ class QuestionController extends Controller
     public function __construct(MiiQaExtension $extension)
     {
         $this->extension    = $extension;
-        $this->questions 	  = $this['db.em']->getRepository('Mii\Qa\Entity\Question');
-        $this->tags 	      = $this['db.em']->getRepository('Mii\Qa\Entity\Tag');
-        $this->roles        = $this['users']->getRoleRepository();
-        $this->users 		    = $this['users']->getUserRepository();
+        $this->questions    = $this['db.em']->getRepository('Mii\Qa\Entity\Question');
+        $this->tags         = $this['db.em']->getRepository('Mii\Qa\Entity\Tag');
+        $this->users        = $this['users']->getUserRepository();
     }
 
     /**
@@ -70,7 +69,7 @@ class QuestionController extends Controller
         $count = $query->count();
         $total = ceil($count / $limit);
         $page  = max(0, min($total - 1, $page));
-        $questions = $query->offset($page * $limit)->limit($limit)->related('user')->orderBy('date', 'DESC')->get();
+        $questions = $query->offset($page * $limit)->limit($limit)->related('tags')->related('user')->orderBy('date', 'DESC')->get();
 
         if ($this['request']->isXmlHttpRequest()) {
             return $this['response']->json([
@@ -102,20 +101,19 @@ class QuestionController extends Controller
         $tagsSelected = [];
 
         return [
-        	'head.title' => __('Add Question'),
-        	'question' => $question,
-          'tags' => compact('tagsAvailable', 'tagsSelected'),
-        	'statuses' => Question::getStatuses(),
-        	'roles' => $this->roles->findAll(),
-        	'users' => $this->users->findAll()
+        	'head.title'   => __('Add Question'),
+        	'question'     => $question,
+            'tags'         => compact('tagsAvailable', 'tagsSelected'),
+        	'statuses'     => Question::getStatuses(),
+        	'users'        => $this->users->findAll()
         ];
     }
 
     /**
-     * @Request({"id": "int", "question": "array"}, csrf=true)
+     * @Request({"id": "int", "question": "array", "tags": "array"}, csrf=true)
      * @Response("json")
      */
-    public function saveAction($id, $data)
+    public function saveAction($id, $data, $tags = null)
     {
         try {
 
@@ -136,6 +134,8 @@ class QuestionController extends Controller
             $data['date'] = (isset($data['date'])) ? $this['dates']->getDateTime(strtotime($data['date']))->setTimezone(new \DateTimeZone('UTC')) : $now;
             $data['date'] = $id ? $data['date'] : $now;
 
+            $question->setTags($tags ? $this->tags->query()->whereIn('id', $tags)->get() : []);
+
             $this->questions->save($question, $data);
 
             return ['message' => $id ? __('Question saved.') : __('Question created.'), 'id' => $question->getId()];
@@ -155,7 +155,7 @@ class QuestionController extends Controller
     {
         try {
 
-            if (!$question = $this->questions->query()->where(compact('id'))->related('user')->first()) {
+            if (!$question = $this->questions->where(compact('id'))->related('user')->related('tags')->first()) {
                 throw new Exception(__('Invalid question id.'));
             }
 
@@ -166,15 +166,13 @@ class QuestionController extends Controller
             return $this->redirect('@miiQA/admin/question');
         }
 
-        $tagsAvailable = $this->tags->query()->orderBy('count', 'DESC')->orderBy('label', 'ASC')->get();
-        $tagsSelected = [];
+        $tags = $this->tags->query()->orderBy('count', 'DESC')->orderBy('label', 'ASC')->get();
 
         return [
             'head.title' => __('Edit Question'),
             'question' => $question,
-            'tags' => compact('tagsAvailable', 'tagsSelected'),
+            'tags' => $tags,
             'statuses' => Question::getStatuses(),
-            'roles' => $this->roles->findAll(),
             'users' => $this->users->findAll()
         ];
     }

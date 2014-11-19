@@ -60,11 +60,11 @@ class TagController extends Controller
             ]);
         }
         return [
-            'head.title' => __('Tags'),
-            'tags' => $tags,
-            'filter' => $filter,
-            'total' => $total,
-            'count' => $count,
+            'head.title'  => __('Tags'),
+            'tags'        => $tags,
+            'filter'      => $filter,
+            'total'       => $total,
+            'count'       => $count,
         ];
     }
 
@@ -77,15 +77,18 @@ class TagController extends Controller
     {
         try {
 
-            if (!$tag = $this->tags->find($id)) {
+          if(empty($data['label']))
+              return ['message' => 'Please enter a valid tag.', 'error' => true];
+              
+          if($this->tags->where(array('label' => $data['label']))->count())
+              return ['message' => 'This tag already exist.', 'error' => true];
 
-                $tag = new Tag;
+          if(!$tag = $this->tags->find($id))
+              $tag = new Tag;
 
-            }
+          $this->tags->save($tag, $data);
 
-            $this->tags->save($tag, $data);
-
-            return ['message' => $id ? __('Tag saved.') : __('Tag created.'), 'id' => $tag->getId()];
+          return ['message' => $id ? __('Tag saved.') : __('Tag created.'), 'id' => $tag->getId()];
 
         } catch (Exception $e) {
 

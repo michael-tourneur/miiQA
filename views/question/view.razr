@@ -17,6 +17,11 @@
 	</header>
 	<div class="uk-clearfix">
 		@($question.content)
+		<div>
+		@foreach($question.getTags() as $tag)
+			<div class="uk-badge">@($tag.getLabel())</div>
+		@endforeach
+		</div>
 		<div class="uk-float-right uk-text-small">
 			<div>@trans( 'Answered' ) @date($question.date)</div>
 			<div class="uk-clearfix">
