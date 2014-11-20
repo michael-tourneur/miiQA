@@ -1,7 +1,7 @@
 @script('miiQA.admin-tag-index', 'extension://miiqa/assets/js/admin/tag/index.js', 'requirejs')
 
-<form id="addTagForm" class="uk-form uk-hidden" action="@url('@miiQA/admin/tag/save')" method="post">
-    <input type="text" required="required" placeholder="Label" value="" name="tag[label]"/>
+<form id="addTagForm" class="uk-form uk-hidden" action="@url('@miiQA/admin/tag/save')" method="post" style="margin-bottom:30px;">
+    <input type="text" required="required" placeholder="Label" value="" name="tag[label]" class="uk-width-1-2 uk-width-medium-1-3" />
     <input type="hidden" value="0" name="id"/>
     <input type="submit" class="uk-button" value="Add"/>
     @token
