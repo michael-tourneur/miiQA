@@ -117,13 +117,24 @@ class AnswerController extends Controller
 
             }
 
-            if (!$answer = $this->answers->find($id)) {
+            //NEW
+            if (!$answer = $this->answers->where(['id' => $id])->related('question')->first()) {
 
                 $answer = new Answer;
                 $answer->setUser($this['user']);
-                $questionData['comment_count'] = $question->commentCountPlus();
 
             }
+            //UPDATE AND REASSIGN TO A DIFFERENT QUESTION
+            elseif($data['question_id'] != $answer->getQuestionId()) {
+                
+                $oldQuestion = $answer->getQuestion();
+                $oldQuestion->setCommentCountMinus();
+                $this->questions->save($oldQuestion);
+                
+
+            }
+
+            $questionData['comment_count'] = $question->setCommentCountPlus();
 
             if($question->getStatus() == Question::STATUS_OPEN)
                 $questionData['status'] = Question::STATUS_ANSWERED;
@@ -173,6 +184,21 @@ class AnswerController extends Controller
             'roles' => $this->roles->findAll(), 
             'users' => $this->users->findAll()
         ];
+    }
+
+    /**
+     * @Request({"ids": "int[]"}, csrf=true)
+     * @Response("json")
+     */
+    public function deleteAction($ids = [])
+    {
+        foreach ($ids as $id) {
+            if ($answer = $this->answers->find($id)) {
+                $this->answers->delete($answer);
+            }
+        }
+
+        return ['message' => _c('{0} No answer deleted.|{1} Answer deleted.|]1,Inf[ Answers deleted.', count($ids))];
     }
 
 

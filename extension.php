@@ -45,6 +45,13 @@ return [
             'active' => '@miiQA/admin/answer*',
             'access' => 'miiQA: manage answers'
         ],
+        'miiQA: tag list' => [
+            'label'  => 'Tags',
+            'parent' => 'miiQA',
+            'url'    => '@miiQA/admin/tag',
+            'active' => '@miiQA/admin/tag*',
+            'access' => 'miiQA: manage tags'
+        ],
 
     ],
 
@@ -58,6 +65,9 @@ return [
         ],
         'miiQA: manage answers' => [
             'title' => 'Manage answers'
+        ],
+        'miiQA: manage tags' => [
+            'title' => 'Manage tags'
         ]
 
     ],
@@ -65,7 +75,7 @@ return [
 
     'defaults' => [
 
-        'index.questions_per_page'  => 20,
+        'index.items_per_page'  => 20,
 
     ]
 

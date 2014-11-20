@@ -1,13 +1,15 @@
 require(['jquery', 'uikit!pagination', 'rowselect', 'domReady!'], function($, uikit, RowSelect) {
 
-    var form         = $('#js-answers'),
+    var form         = $('#js-tags'),
         showOnSelect = form.find('.js-show-on-select').addClass('uk-hidden'),
         table        = $('.js-table', form).on('selected-rows', function(e, rows) { showOnSelect.toggleClass('uk-hidden', !rows.length); }),
         rowselect    = new RowSelect(table),
         pagination   = $('[data-uk-pagination]', form),
-        page         = $('[name="page"]', form);
+        page         = $('[name="page"]', form),
+        addTag       = $('#addTag'),
+        addTagForm   = $('#addTagForm');
 
-    // action button
+    // delete button
     form.on('click', '[data-action]', function(e) {
         e.preventDefault();
 
@@ -41,6 +43,21 @@ require(['jquery', 'uikit!pagination', 'rowselect', 'domReady!'], function($, ui
     });
 
     function selectPage(index) {
+        console.log(index);
         pagination.data('pagination').selectPage(index);
     }
+
+    addTag.on('click', function(e){
+      e.preventDefault();
+      addTagForm.toggleClass('uk-hidden');
+    });
+
+    // add button
+    addTagForm.on('submit', function(e){
+      e.preventDefault();
+      $.post($(this).attr('action'), $(this).serialize(), function(data) {
+          uikit.notify(data.message, data.error ? 'danger' : 'success');
+          selectPage(page.val());
+      });
+    });
 });

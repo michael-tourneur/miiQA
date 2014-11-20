@@ -6,13 +6,14 @@ use Pagekit\System\Entity\DataTrait;
 use Pagekit\User\Entity\AccessTrait;
 use Pagekit\Comment\CommentsTrait;
 use Pagekit\Framework\Database\Event\EntityEvent;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @Entity(tableClass="@miiqa_questions")
  */
 class Question
 {
-    use AccessTrait, DataTrait, CommentsTrait;
+    use DataTrait, CommentsTrait;
 
     /* question open status. */
     const STATUS_OPEN = 1;
@@ -31,6 +32,9 @@ class Question
 
     /** @Column(type="string") */
     protected $slug;
+
+    /** @ManyToMany(targetEntity="Tag", keyFrom="id", keyTo="id", tableThrough="@miiqa_question_tag", keyThroughFrom="question_id", keyThroughTo="tag_id") */
+    protected $tags;
 
     /**
      * @HasMany(targetEntity="Answer", keyFrom="id", keyTo="question_id")
@@ -154,7 +158,7 @@ class Question
     }
 
     public static function getStatuses()
-    {   
+    {
         return [
             self::STATUS_OPEN           => __('Open'),
             self::STATUS_ANSWERED       => __('Answered'),
@@ -218,9 +222,14 @@ class Question
         return $this->comment_count;
     }
 
-    public function commentCountPlus()
+    public function setCommentCountPlus()
     {
         return $this->comment_count += 1;
+    }
+
+    public function setCommentCountMinus()
+    {
+        return $this->comment_count -= 1;
     }
 
     public function getBestAnswer()
@@ -238,6 +247,26 @@ class Question
         return $this->date;
     }
 
+    public function addTag(Tag $tag)
+    {
+        $this->tags->add($tag);
+    }
+
+    public function setTags($tags){
+        $this->tags = $tags;
+    }
+
+    public function getTags(){
+        return (array) $this->tags;
+    }
+
+    public function hasTag($tagId){
+        foreach ($this->getTags() as $tag) {
+            if($tag->getId() == $tagId) return true;
+        }
+        return false;
+    }
+
     /**
      * @PreSave
      */
@@ -245,21 +274,38 @@ class Question
     {
         $this->modified = new \DateTime;
 
-        $repository = $event->getEntityManager()->getRepository(get_class($this));
+        $questionRepository = $event->getEntityManager()->getRepository(get_class($this));
 
         $i = 2;
         $id = $this->id;
 
-        while ($repository->query()->where('slug = ?', [$this->slug])->where(function($query) use($id) { if ($id) $query->where('id <> ?', [$id]); })->first()) {
+        while ($questionRepository->query()->where('slug = ?', [$this->slug])->where(function($query) use($id) { if ($id) $query->where('id <> ?', [$id]); })->first()) {
             $this->slug = preg_replace('/-\d+$/', '', $this->slug).'-'.$i++;
         }
     }
 
     /**
-     * @PreDelete
+     * @PostSave
      */
-    public function preDelete(EntityEvent $event)
+    public function postSave(EntityEvent $event)
     {
-        $event->getConnection()->delete('@miiqa_answers', ['question_id' => $this->getId()]);
+        $connection = $event->getConnection();
+        $connection->delete('@miiqa_question_tag', ['question_id' => $this->getId()]);
+
+        if (is_array($this->tags)) {
+            foreach ($this->tags as $tag) {
+                $connection->insert('@miiqa_question_tag', ['question_id' => $this->getId(), 'tag_id' => $tag->getId()]);
+            }
+        }
+    }
+
+    /**
+     * @PostDelete
+     */
+    public function postDelete(EntityEvent $event)
+    {
+        $connection = $event->getConnection();
+        $connection->delete('@miiqa_answers', ['question_id' => $this->getId()]);
+        $connection->delete('@miiqa_question_tag', ['question_id' => $this->getId()]);
     }
 }

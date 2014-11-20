@@ -13,6 +13,14 @@
 	    		</label>
 	    		<textarea name="question[content]" class="uk-width-1-1" rows="10"></textarea>
 				</div>
+				<div class="uk-form-row">
+          <label class="uk-form-label" for="question[content]">@trans('Tags'):</label>
+          <select multiple="multiple" name="tags[]" class="uk-width-1-1 uk-form-large">
+          @foreach($tags as $tag)
+            <option value="@( $tag.id )">@trans( $tag.label )</option>
+          @endforeach
+          </select>
+        </div>
 				
         <input type="hidden" name="question[user_id]" value="@($question.userid)">
         <button class="uk-button">@trans('Submit your question')</button> 

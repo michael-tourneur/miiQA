@@ -28,7 +28,7 @@ class QuestionController extends Controller
     /**
      * @var Repository
      */
-    protected $roles;
+    protected $tags;
 
     /**
      * @var UserRepository
@@ -41,9 +41,9 @@ class QuestionController extends Controller
     public function __construct(MiiQaExtension $extension)
     {
         $this->extension    = $extension;
-        $this->questions 	= $this['db.em']->getRepository('Mii\Qa\Entity\Question');
-        $this->roles        = $this['users']->getRoleRepository();
-        $this->users 		= $this['users']->getUserRepository();
+        $this->questions    = $this['db.em']->getRepository('Mii\Qa\Entity\Question');
+        $this->tags         = $this['db.em']->getRepository('Mii\Qa\Entity\Tag');
+        $this->users        = $this['users']->getUserRepository();
     }
 
     /**
@@ -65,11 +65,11 @@ class QuestionController extends Controller
         }
 
 
-        $limit = $this->extension->getConfig('index.questions_per_page');
+        $limit = $this->extension->getConfig('index.items_per_page');
         $count = $query->count();
         $total = ceil($count / $limit);
         $page  = max(0, min($total - 1, $page));
-        $questions = $query->offset($page * $limit)->limit($limit)->related('user')->orderBy('date', 'DESC')->get();
+        $questions = $query->offset($page * $limit)->limit($limit)->related('tags')->related('user')->orderBy('date', 'DESC')->get();
 
         if ($this['request']->isXmlHttpRequest()) {
             return $this['response']->json([
@@ -79,12 +79,12 @@ class QuestionController extends Controller
         }
 
         return [
-            'head.title' => __('Questions'), 
-            'questions' => $questions, 
-            'statuses' => Question::getStatuses(), 
-            'filter' => $filter, 
-            'total' => $total, 
-            'count' => $count, 
+            'head.title' => __('Questions'),
+            'questions' => $questions,
+            'statuses' => Question::getStatuses(),
+            'filter' => $filter,
+            'total' => $total,
+            'count' => $count,
         ];
     }
 
@@ -97,20 +97,23 @@ class QuestionController extends Controller
         $question->setUser($this['user']);
         // $question->setCommentStatus(true);
 
+        $tagsAvailable = $this->tags->query()->orderBy('count', 'DESC')->orderBy('label', 'ASC')->get();
+        $tagsSelected = [];
+
         return [
-        	'head.title' => __('Add Question'), 
-        	'question' => $question, 
-        	'statuses' => Question::getStatuses(), 
-        	'roles' => $this->roles->findAll(), 
-        	'users' => $this->users->findAll()
+        	'head.title'   => __('Add Question'),
+        	'question'     => $question,
+            'tags'         => compact('tagsAvailable', 'tagsSelected'),
+        	'statuses'     => Question::getStatuses(),
+        	'users'        => $this->users->findAll()
         ];
     }
 
     /**
-     * @Request({"id": "int", "question": "array"}, csrf=true)
+     * @Request({"id": "int", "question": "array", "tags": "array"}, csrf=true)
      * @Response("json")
      */
-    public function saveAction($id, $data)
+    public function saveAction($id, $data, $tags = null)
     {
         try {
 
@@ -131,6 +134,8 @@ class QuestionController extends Controller
             $data['date'] = (isset($data['date'])) ? $this['dates']->getDateTime(strtotime($data['date']))->setTimezone(new \DateTimeZone('UTC')) : $now;
             $data['date'] = $id ? $data['date'] : $now;
 
+            $question->setTags($tags ? $this->tags->query()->whereIn('id', $tags)->get() : []);
+
             $this->questions->save($question, $data);
 
             return ['message' => $id ? __('Question saved.') : __('Question created.'), 'id' => $question->getId()];
@@ -150,7 +155,7 @@ class QuestionController extends Controller
     {
         try {
 
-            if (!$question = $this->questions->query()->where(compact('id'))->related('user')->first()) {
+            if (!$question = $this->questions->where(compact('id'))->related('user')->related('tags')->first()) {
                 throw new Exception(__('Invalid question id.'));
             }
 
@@ -161,11 +166,13 @@ class QuestionController extends Controller
             return $this->redirect('@miiQA/admin/question');
         }
 
+        $tags = $this->tags->query()->orderBy('count', 'DESC')->orderBy('label', 'ASC')->get();
+
         return [
-            'head.title' => __('Edit Question'), 
-            'question' => $question, 
-            'statuses' => Question::getStatuses(), 
-            'roles' => $this->roles->findAll(), 
+            'head.title' => __('Edit Question'),
+            'question' => $question,
+            'tags' => $tags,
+            'statuses' => Question::getStatuses(),
             'users' => $this->users->findAll()
         ];
     }
@@ -235,7 +242,7 @@ class QuestionController extends Controller
      * @Request({"id": "int", "vote": "boolean"})
      * @Response("json")
      */
-    public function voteAction($id, $vote) 
+    public function voteAction($id, $vote)
     {
         try {
 
@@ -257,7 +264,7 @@ class QuestionController extends Controller
 
         }
     }
-    
+
 
     protected function slugify($slug)
     {

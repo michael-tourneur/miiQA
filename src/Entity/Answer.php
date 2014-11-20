@@ -205,4 +205,16 @@ class Answer
     {
         $this->question = $question;
     }
+
+    /**
+     * @PostDelete
+     */
+    public function postDelete(EntityEvent $event)
+    {
+        $questions = $event->getEntityManager()->getRepository('Mii\Qa\Entity\Question');
+        if($question = $questions->find($this->getQuestionId())){
+            $question->setCommentCountMinus();
+            $questions->save($question);
+        }
+    }
 }

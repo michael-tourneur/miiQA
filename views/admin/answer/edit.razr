@@ -22,7 +22,7 @@
 
             <div class="uk-panel uk-panel-divider">
                 <div class="uk-form-row">
-                    <label for="form-question" class="uk-form-label">@trans('Author')</label>
+                    <label for="form-question" class="uk-form-label">@trans('Question')</label>
                     <div class="uk-form-controls">
                         <select id="form-question" class="uk-width-1-1" name="answer[question_id]">
                             @foreach($questions as $id => $question)

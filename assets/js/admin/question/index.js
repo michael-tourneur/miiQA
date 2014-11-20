@@ -29,9 +29,9 @@ require(['jquery', 'uikit!pagination', 'rowselect', 'domReady!'], function($, ui
     });
 
     // pagination
-    pagination.on('uk-select-page', function(e, index) {
+    pagination.on('uk.pagination.select', function(e, index) {
         page.val(index);
-
+        console.log(index);
         $.post(form.data('action'), form.serialize(), function(data) {
             table.html(data.table);
             pagination.toggleClass('uk-hidden', data.total < 2).data('pagination').render(data.total);
