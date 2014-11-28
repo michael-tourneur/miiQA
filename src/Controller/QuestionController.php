@@ -65,7 +65,7 @@ class QuestionController extends Controller
         }
 
 
-        $limit = $this->extension->getConfig('index.items_per_page');
+        $limit = $this->extension->getConfig('index_items_per_page');
         $count = $query->count();
         $total = ceil($count / $limit);
         $page  = max(0, min($total - 1, $page));

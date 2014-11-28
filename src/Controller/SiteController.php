@@ -89,7 +89,7 @@ class SiteController extends Controller
             $query->orderBy($filter['orderby'], $order);
         }
 
-        $limit  = $this->extension->getConfig('index.items_per_page', 20);
+        $limit  = $this->extension->getConfig('index_items_per_page', 20);
         $count  = $query->count();
         $total  = ceil($count / $limit);
         $page   = max(0, min($total - 1, $page));

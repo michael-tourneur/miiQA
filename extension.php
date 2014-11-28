@@ -75,7 +75,7 @@ return [
 
     'defaults' => [
 
-        'index.items_per_page'  => 20,
+        'index_items_per_page'  => 20,
 
     ]
 
