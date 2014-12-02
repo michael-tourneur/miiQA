@@ -69,7 +69,7 @@ class QuestionController extends Controller
         $count = $query->count();
         $total = ceil($count / $limit);
         $page  = max(0, min($total - 1, $page));
-        $questions = $query->offset($page * $limit)->limit($limit)->related('tags')->related('user')->orderBy('date', 'DESC')->get();
+        $questions = $query->offset($page * $limit)->limit($limit)->related('user')->orderBy('date', 'DESC')->get();
 
         if ($this['request']->isXmlHttpRequest()) {
             return $this['response']->json([
@@ -155,7 +155,7 @@ class QuestionController extends Controller
     {
         try {
 
-            if (!$question = $this->questions->where(compact('id'))->related('user')->related('tags')->first()) {
+            if (!$question = $this->questions->where(compact('id'))->related('user')->first()) {
                 throw new Exception(__('Invalid question id.'));
             }
 

@@ -2,9 +2,11 @@
 
 namespace Mii\Qa\Entity;
 
+use Mii\Taxonomy\Entity\TermsTrait;
+
 use Pagekit\System\Entity\DataTrait;
-use Pagekit\User\Entity\AccessTrait;
 use Pagekit\Comment\CommentsTrait;
+
 use Pagekit\Framework\Database\Event\EntityEvent;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -13,7 +15,9 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Question
 {
-    use DataTrait, CommentsTrait;
+    use DataTrait, CommentsTrait, TermsTrait;
+
+    const VOCABULARY_NAME = 'tag';
 
     /* question open status. */
     const STATUS_OPEN = 1;
@@ -32,9 +36,6 @@ class Question
 
     /** @Column(type="string") */
     protected $slug;
-
-    /** @ManyToMany(targetEntity="Tag", keyFrom="id", keyTo="id", tableThrough="@miiqa_question_tag", keyThroughFrom="question_id", keyThroughTo="tag_id") */
-    protected $tags;
 
     /**
      * @HasMany(targetEntity="Answer", keyFrom="id", keyTo="question_id")
@@ -247,26 +248,6 @@ class Question
         return $this->date;
     }
 
-    public function addTag(Tag $tag)
-    {
-        $this->tags->add($tag);
-    }
-
-    public function setTags($tags){
-        $this->tags = $tags;
-    }
-
-    public function getTags(){
-        return (array) $this->tags;
-    }
-
-    public function hasTag($tagId){
-        foreach ($this->getTags() as $tag) {
-            if($tag->getId() == $tagId) return true;
-        }
-        return false;
-    }
-
     /**
      * @PreSave
      */
@@ -282,30 +263,5 @@ class Question
         while ($questionRepository->query()->where('slug = ?', [$this->slug])->where(function($query) use($id) { if ($id) $query->where('id <> ?', [$id]); })->first()) {
             $this->slug = preg_replace('/-\d+$/', '', $this->slug).'-'.$i++;
         }
-    }
-
-    /**
-     * @PostSave
-     */
-    public function postSave(EntityEvent $event)
-    {
-        $connection = $event->getConnection();
-        $connection->delete('@miiqa_question_tag', ['question_id' => $this->getId()]);
-
-        if (is_array($this->tags)) {
-            foreach ($this->tags as $tag) {
-                $connection->insert('@miiqa_question_tag', ['question_id' => $this->getId(), 'tag_id' => $tag->getId()]);
-            }
-        }
-    }
-
-    /**
-     * @PostDelete
-     */
-    public function postDelete(EntityEvent $event)
-    {
-        $connection = $event->getConnection();
-        $connection->delete('@miiqa_answers', ['question_id' => $this->getId()]);
-        $connection->delete('@miiqa_question_tag', ['question_id' => $this->getId()]);
     }
 }
